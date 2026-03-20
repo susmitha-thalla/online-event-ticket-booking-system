@@ -8,6 +8,7 @@ import com.event.ticketbooking.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
 
 @Service
@@ -19,22 +20,22 @@ public class EventService {
     @Autowired
     private UserRepository userRepository;
 
-    // ✅ CREATE EVENT (ONLY ORGANIZER)
-    public String createEvent(EventRequest request) {
+    public String createEvent(EventRequest request, Principal principal) {
 
-        User user = userRepository.findByEmail(request.getUserEmail())
+        String email = principal.getName();
+
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // 🔥 ROLE CHECK
-        if (!user.getRole().equals("ORGANIZER")) {
+        if (!"ORGANIZER".equals(user.getRole())) {
             return "Only organizers can create events!";
         }
 
         Event event = new Event();
-
         event.setTitle(request.getTitle());
         event.setDescription(request.getDescription());
         event.setLocation(request.getLocation());
+        event.setCategory(request.getCategory());
         event.setEventDate(request.getEventDate());
         event.setPrice(request.getPrice());
         event.setAvailableSeats(request.getAvailableSeats());
@@ -45,10 +46,10 @@ public class EventService {
         return "Event Created Successfully";
     }
 
-    // ✅ GET ALL EVENTS
     public List<Event> getAllEvents() {
         return eventRepository.findAll();
     }
+
     public List<Event> getByCategory(String category) {
         return eventRepository.findByCategory(category);
     }

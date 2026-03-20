@@ -7,12 +7,10 @@ public class EventRequest {
     private String title;
     private String description;
     private String location;
+    private String category; // ✅ ADD THIS
     private LocalDateTime eventDate;
     private Double price;
     private Integer availableSeats;
-    private String userEmail; // who is creating
-
-    // Getters & Setters
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
@@ -23,6 +21,9 @@ public class EventRequest {
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
 
+    public String getCategory() { return category; }  // ✅ IMPORTANT
+    public void setCategory(String category) { this.category = category; }
+
     public LocalDateTime getEventDate() { return eventDate; }
     public void setEventDate(LocalDateTime eventDate) { this.eventDate = eventDate; }
 
@@ -31,7 +32,4 @@ public class EventRequest {
 
     public Integer getAvailableSeats() { return availableSeats; }
     public void setAvailableSeats(Integer availableSeats) { this.availableSeats = availableSeats; }
-
-    public String getUserEmail() { return userEmail; }
-    public void setUserEmail(String userEmail) { this.userEmail = userEmail; }
 }

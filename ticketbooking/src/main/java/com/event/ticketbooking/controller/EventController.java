@@ -6,6 +6,7 @@ import com.event.ticketbooking.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -15,17 +16,16 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
-    // ✅ CREATE EVENT
     @PostMapping("/create")
-    public String createEvent(@RequestBody EventRequest request) {
-        return eventService.createEvent(request);
+    public String createEvent(@RequestBody EventRequest request, Principal principal) {
+        return eventService.createEvent(request, principal);
     }
 
-    // ✅ VIEW EVENTS
     @GetMapping("/all")
     public List<Event> getAllEvents() {
         return eventService.getAllEvents();
     }
+
     @GetMapping("/category/{category}")
     public List<Event> getByCategory(@PathVariable String category) {
         return eventService.getByCategory(category);
@@ -37,9 +37,7 @@ public class EventController {
     }
 
     @GetMapping("/filter")
-    public List<Event> filter(
-            @RequestParam String category,
-            @RequestParam String location) {
+    public List<Event> filter(@RequestParam String category, @RequestParam String location) {
         return eventService.getByCategoryAndLocation(category, location);
     }
 }
