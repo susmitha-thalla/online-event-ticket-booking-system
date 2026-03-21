@@ -12,12 +12,12 @@ public class Booking {
     private Long bookingId;
 
     private Integer quantity;
-
     private Double totalAmount;
-
-    @Column(name = "qr_code")
     private String qrCode;
-
+    private String paymentMode;
+    private String paymentStatus;
+    private String seatNumbers;
+    private String gender;
     private LocalDateTime bookingTime;
 
     @ManyToOne
@@ -28,30 +28,94 @@ public class Booking {
     @JoinColumn(name = "event_id")
     private Event event;
 
-    @PrePersist
-    public void setBookingTimeAutomatically() {
-        this.bookingTime = LocalDateTime.now();
+    public Booking() {
     }
 
-    // getters & setters
-    public Long getBookingId() { return bookingId; }
+    public Long getBookingId() {
+        return bookingId;
+    }
 
-    public Integer getQuantity() { return quantity; }
-    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+    public void setBookingId(Long bookingId) {
+        this.bookingId = bookingId;
+    }
 
-    public Double getTotalAmount() { return totalAmount; }
-    public void setTotalAmount(Double totalAmount) { this.totalAmount = totalAmount; }
+    public Integer getQuantity() {
+        return quantity;
+    }
 
-    public String getQrCode() { return qrCode; }
-    public void setQrCode(String qrCode) { this.qrCode = qrCode; }
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
 
-    public LocalDateTime getBookingTime() { return bookingTime; }
-    public void setBookingTime(LocalDateTime bookingTime) { this.bookingTime = bookingTime; }
+    public Double getTotalAmount() {
+        return totalAmount;
+    }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public void setTotalAmount(Double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
 
-    public Event getEvent() { return event; }
-    public void setEvent(Event event) { this.event = event; }
+    public String getQrCode() {
+        return qrCode;
+    }
 
+    public void setQrCode(String qrCode) {
+        this.qrCode = qrCode;
+    }
+
+    public String getPaymentMode() {
+        return paymentMode;
+    }
+
+    public void setPaymentMode(String paymentMode) {
+        this.paymentMode = paymentMode;
+    }
+
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    public String getSeatNumbers() {
+        return seatNumbers;
+    }
+
+    public void setSeatNumbers(String seatNumbers) {
+        this.seatNumbers = seatNumbers;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public LocalDateTime getBookingTime() {
+        return bookingTime;
+    }
+
+    public void setBookingTime(LocalDateTime bookingTime) {
+        this.bookingTime = bookingTime;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
 }

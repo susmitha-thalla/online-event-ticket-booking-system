@@ -1,12 +1,18 @@
 package com.event.ticketbooking.service;
 
 import com.event.ticketbooking.dto.BookingRequest;
-import com.event.ticketbooking.model.*;
-import com.event.ticketbooking.repository.*;
+import com.event.ticketbooking.model.Booking;
+import com.event.ticketbooking.model.Event;
+import com.event.ticketbooking.model.User;
+import com.event.ticketbooking.repository.BookingRepository;
+import com.event.ticketbooking.repository.EventRepository;
+import com.event.ticketbooking.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -16,24 +22,42 @@ public class BookingService {
     private BookingRepository bookingRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private EventRepository eventRepository;
 
-    public String bookTicket(BookingRequest request) {
+    @Autowired
+    private UserRepository userRepository;
 
-        User user = userRepository.findById(request.getUserId())
+    public String bookTicket(BookingRequest request, Principal principal) {
+
+        String email = principal.getName();
+
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!"USER".equals(user.getRole())) {
+            return "Only users can book tickets!";
+        }
 
         Event event = eventRepository.findById(request.getEventId())
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
-        // 💰 calculate total price
-        double totalAmount = event.getPrice() * request.getQuantity();
+        if (!"APPROVED".equals(event.getApprovalStatus())) {
+            return "Only approved events can be booked";
+        }
 
-        // 🔐 unique QR
+        if (request.getQuantity() == null || request.getQuantity() <= 0) {
+            return "Quantity must be greater than 0";
+        }
+
+        if (event.getAvailableSeats() < request.getQuantity()) {
+            return "Not enough seats available!";
+        }
+
+        double totalAmount = event.getPrice() * request.getQuantity();
         String qr = UUID.randomUUID().toString();
+
+        event.setAvailableSeats(event.getAvailableSeats() - request.getQuantity());
+        eventRepository.save(event);
 
         Booking booking = new Booking();
         booking.setUser(user);
@@ -41,10 +65,22 @@ public class BookingService {
         booking.setQuantity(request.getQuantity());
         booking.setTotalAmount(totalAmount);
         booking.setQrCode(qr);
+        booking.setPaymentMode(request.getPaymentMode());
+        booking.setPaymentStatus("SUCCESS");
+        booking.setSeatNumbers(request.getSeatNumbers());
+        booking.setGender(request.getGender());
         booking.setBookingTime(LocalDateTime.now());
 
         bookingRepository.save(booking);
 
         return "Booking Successful. QR: " + qr;
+    }
+
+    public List<Booking> getUserBookings(Principal principal) {
+        return bookingRepository.findByUser_Email(principal.getName());
+    }
+
+    public List<Booking> getOrganizerBookings(Principal principal) {
+        return bookingRepository.findByEvent_CreatedBy(principal.getName());
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -40,25 +41,45 @@ public class EventService {
         event.setPrice(request.getPrice());
         event.setAvailableSeats(request.getAvailableSeats());
         event.setCreatedBy(user.getEmail());
+        event.setApprovalStatus("PENDING");
+        event.setOrganizerPaid(true);
 
         eventRepository.save(event);
 
-        return "Event Created Successfully";
+        return "Event Created Successfully and sent for admin approval";
     }
 
     public List<Event> getAllEvents() {
-        return eventRepository.findAll();
+        return eventRepository.findByApprovalStatus("APPROVED");
     }
 
     public List<Event> getByCategory(String category) {
-        return eventRepository.findByCategory(category);
+        return eventRepository.findByCategoryAndApprovalStatus(category, "APPROVED");
     }
 
     public List<Event> getByLocation(String location) {
-        return eventRepository.findByLocation(location);
+        return eventRepository.findByLocationAndApprovalStatus(location, "APPROVED");
     }
 
     public List<Event> getByCategoryAndLocation(String category, String location) {
-        return eventRepository.findByCategoryAndLocation(category, location);
+        return eventRepository.findByCategoryAndLocationAndApprovalStatus(category, location, "APPROVED");
+    }
+
+    public List<Event> getByDateRange(LocalDateTime start, LocalDateTime end) {
+        return eventRepository.findByEventDateBetweenAndApprovalStatus(start, end, "APPROVED");
+    }
+
+    public List<Event> getOrganizerEvents(Principal principal) {
+        return eventRepository.findByCreatedBy(principal.getName());
+    }
+
+    public String approveEvent(Long eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        event.setApprovalStatus("APPROVED");
+        eventRepository.save(event);
+
+        return "Event Approved";
     }
 }

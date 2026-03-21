@@ -22,6 +22,8 @@ public class Event {
 
     private String createdBy; // organizer email
     private String category; // MUSIC, TECH, SPORTS etc
+    private String approvalStatus; // PENDING / APPROVED
+    private Boolean organizerPaid;
 
     // Getters & Setters
 
@@ -47,6 +49,12 @@ public class Event {
 
     public String getLocation() {
         return location;
+    }
+    public String getApprovalStatus() {
+        return approvalStatus;
+    }
+    public Boolean getOrganizerPaid() {
+        return organizerPaid;
     }
 
     public void setLocation(String location) {
@@ -90,5 +98,12 @@ public class Event {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+    public void setApprovalStatus(String approvalStatus) {
+        this.approvalStatus = approvalStatus;
+    }
+
+    public void setOrganizerPaid(Boolean organizerPaid) {
+        this.organizerPaid = organizerPaid;
     }
 }
